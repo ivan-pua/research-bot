@@ -53,7 +53,7 @@ def main():
         return response
     
     # creates a new Blocks app and assigns it to the variable demo.
-    with gr.Blocks() as app: 
+    with gr.Blocks(title="Research Bot") as app: 
 
         gr.Markdown(
             """
