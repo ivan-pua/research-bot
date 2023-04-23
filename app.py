@@ -58,8 +58,9 @@ def main():
         gr.Markdown(
             """
         # Research Bot 🔬
-        Created by: [Ivan Pua](https://ivanpua.com/), using GPT-3.5.
-        Start typing a complex term below to see it's earliest reference. 
+        **Start typing a complex term below to see it's earliest reference.**
+        As this bot is still in beta version, I will be grateful for any [feedback](https://forms.gle/L7cmV3b3rF8QoT347) you might have!  \
+        And if you've found this bot helpful, would you kindly consider [buying me a coffee](https://www.buymeacoffee.com/ivanpuatomato?) ☕️ Your support would mean the world to me!
         """
         )
 
@@ -71,7 +72,7 @@ def main():
             '''creates a new Textbox component, which is used to collect user input. 
             The show_label parameter is set to False to hide the label, 
             and the placeholder parameter is set'''
-            txt = gr.Textbox(show_label=False, placeholder="Enter text and press enter").style(container=False)
+            txt = gr.Textbox(show_label=False, placeholder="e.g. Game Theory, Coronavirus, Neural Networks").style(container=False)
         
         '''
         sets the submit action of the Textbox to the predict function, 
