@@ -1,20 +1,36 @@
 import gradio as gr
 import openai
+from datetime import datetime
+from pytz import timezone
+from apscheduler.schedulers.background import BackgroundScheduler
 
-TRIES = 2
+TRIES = 10
+
+def update_tries():
+    print("TRIES have been reset.")
+    global TRIES
+    TRIES = 10
 
 def main():
+
+    # Configure scheduler to run update_tries() every day at midnight in Sydney timezone
+    scheduler = BackgroundScheduler(timezone='Australia/Sydney')
+    scheduler.add_job(update_tries, 'cron', hour=0, minute=0)
+    scheduler.start()
 
     openai.api_key = open("key.txt", "r").read().strip("\n")
 
     message_history = [{"role": "user", "content": f"You are a research bot. I will specify the subject matter in my messages, and you will reply with the earliest research reference of the subject matter in my messages. Your reply should be the reference in APA format and nothing else. If you understand, say OK."},
                     {"role": "assistant", "content": f"OK"}]
     
+    
     def predict(input):
-        # tokenize the new input sentence
-        message_history.append({"role": "user", "content": f"{input}"})
         
-        if len(message_history) <= TRIES*2:
+        global TRIES
+        if TRIES > 0:
+
+            # tokenize the new input sentence
+            message_history.append({"role": "user", "content": f"{input}"})
 
             completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -25,12 +41,15 @@ def main():
             #.replace('```python', '<pre>').replace('```', '</pre>')
             
             message_history.append({"role": "assistant", "content": f"{reply_content}"}) 
+
+            TRIES = TRIES -1
         else :
+            message_history.append({"role": "user", "content": f"{input}"})
             message_history.append({"role": "assistant", "content": "The daily usage limit has been reached, please check again tomorrow."}) 
             
             # get pairs of msg["content"] from message history, skipping the pre-prompt:              here.
         response = [(message_history[i]["content"], message_history[i+1]["content"]) for i in range(2, len(message_history)-1, 2)]  # convert to tuples of list
-        print(response)
+        # print(response)
         return response
     
     # creates a new Blocks app and assigns it to the variable demo.
