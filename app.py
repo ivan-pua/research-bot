@@ -1,3 +1,4 @@
+import os
 import gradio as gr
 import openai
 from datetime import datetime
@@ -18,7 +19,7 @@ def main():
     scheduler.add_job(update_tries, 'cron', hour=0, minute=0)
     scheduler.start()
 
-    openai.api_key = open("key.txt", "r").read().strip("\n")
+    openai.api_key = os.environ['OPEN_AI_KEY']
 
     message_history = [{"role": "user", "content": f"You are a research bot. I will specify the subject matter in my messages, and you will reply with the earliest research reference of the subject matter in my messages. Your reply should be the reference in APA format and nothing else. If you understand, say OK."},
                     {"role": "assistant", "content": f"OK"}]
@@ -60,7 +61,7 @@ def main():
         # Research Bot 🔬
         **Start typing a complex term below to see it's earliest reference.**
         As this bot is still in beta version, I will be grateful for any [feedback](https://forms.gle/L7cmV3b3rF8QoT347) you might have!  \
-        And if you've found this bot helpful, would you kindly consider [buying me a coffee](https://www.buymeacoffee.com/ivanpuatomato?) ☕️ Your support would mean the world to me!
+        And if you've found this bot helpful, would you kindly consider [buying me a coffee](https://www.buymeacoffee.com/ivanpuatomato?)? ☕️ Your support would mean the world to me!
         """
         )
 
