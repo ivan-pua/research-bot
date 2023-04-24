@@ -5,12 +5,12 @@ from datetime import datetime
 from pytz import timezone
 from apscheduler.schedulers.background import BackgroundScheduler
 
-TRIES = 10
+TRIES = 20
 
 def update_tries():
     print("TRIES have been reset.")
     global TRIES
-    TRIES = 10
+    TRIES = 20
 
 def main():
 
@@ -21,7 +21,7 @@ def main():
 
     openai.api_key = os.environ['OPEN_AI_KEY']
 
-    message_history = [{"role": "user", "content": f"You are a research bot. I will specify the subject matter in my messages, and you will reply with the earliest research reference of the subject matter in my messages. Your reply should be the reference in APA format and nothing else. If you understand, say OK."},
+    message_history = [{"role": "user", "content": f"You are a research bot. I will specify the subject matter in my messages, and you will reply with the earliest research reference of the subject matter in my messages. Your reply should be the reference in APA format and nothing else. Do not display the url link. If you understand, say OK."},
                     {"role": "assistant", "content": f"OK"}]
     
     
@@ -34,8 +34,8 @@ def main():
             message_history.append({"role": "user", "content": f"{input}"})
 
             completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=message_history
+                model="gpt-3.5-turbo",
+                messages=message_history
             )
             #Just the reply text
             reply_content = completion.choices[0].message.content
@@ -49,7 +49,8 @@ def main():
             message_history.append({"role": "assistant", "content": "The daily usage limit has been reached, please check again tomorrow."}) 
             
             # get pairs of msg["content"] from message history, skipping the pre-prompt:              here.
-        response = [(message_history[i]["content"], message_history[i+1]["content"]) for i in range(2, len(message_history)-1, 2)]  # convert to tuples of list
+        # response = [(message_history[i]["content"], message_history[i+1]["content"]) for i in range(2, len(message_history)-1, 2)]  # convert to tuples of list
+        response =[(message_history[-2]["content"], message_history[-1]["content"])]
         # print(response)
         return response
     
@@ -59,7 +60,7 @@ def main():
         gr.Markdown(
             """
         # Research Bot 🔬
-        **Start typing a complex term below to see it's earliest reference.**
+        **Start typing a complex term below to see it's earliest reference, in APA format.**
         As this bot is still in beta version, I will be grateful for any [feedback](https://forms.gle/L7cmV3b3rF8QoT347) you might have!  \
         And if you've found this bot helpful, would you kindly consider [buying me a coffee](https://www.buymeacoffee.com/ivanpuatomato?)? ☕️ Your support would mean the world to me!
         """
