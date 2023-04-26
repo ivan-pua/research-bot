@@ -5,12 +5,12 @@ from datetime import datetime
 from pytz import timezone
 from apscheduler.schedulers.background import BackgroundScheduler
 
-TRIES = 20
+TRIES = 100
 
 def update_tries():
     print("TRIES have been reset.")
     global TRIES
-    TRIES = 20
+    TRIES = 100
 
 def main():
 
